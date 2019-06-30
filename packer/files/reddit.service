@@ -1,0 +1,23 @@
+[Unit]
+Description=RedditApplication
+After=network.target
+
+[Service]
+#Type=forking
+PIDFile=/home/appuser/reddit/puma.pid
+WorkingDirectory=/home/appuser/reddit/
+
+User=appuser
+Group=appuser
+
+OOMScoreAdjust=-100
+
+ExecStart=/usr/local/bin/puma
+ExecStop=/usr/bin/bundle exec pumactl -S /home/appuser/reddit/puma.state stop
+ExecReload=/usr/bin/bundle exec pumactl -S /home/appuser/reddit/puma.state restart
+TimeoutSec=300
+Restart=always
+#RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target 

@@ -1,20 +1,19 @@
 {
   "variables": {
     "var_project_id": null,
-    "var_source_image_family": null,
     "var_machine_type": "f1-micro"
   },
   "builders": [
     {
     "type": "googlecompute",
     "project_id": "{{user `var_project_id`}}",
-    "image_name": "reddit-base-{{timestamp}}",
-    "image_family": "reddit-base",
-    "source_image_family": "{{user `var_source_image_family`}}",
+    "image_name": "reddit-full-{{timestamp}}",
+    "image_family": "reddit-full",
+    "source_image_family": "reddit-base",
     "zone": "europe-west1-d",
     "ssh_username": "appuser",
     "machine_type": "{{user `var_machine_type`}}",
-    "image_description": "Image for OTUS tests",
+    "image_description": "FULL Image for application",
     "disk_size": "11",
     "disk_type": "pd-ssd",
     "network": "default",
@@ -23,13 +22,13 @@
   ],
   "provisioners": [
     {
-      "type": "shell",
-      "script": "scripts/install_ruby.sh",
-      "execute_command": "sudo {{.Path}}"
+      "type": "file",
+      "source": "files/reddit.service",
+      "destination": "/tmp/reddit.service"
     },
     {
       "type": "shell",
-      "script": "scripts/install_mongodb.sh",
+      "script": "scripts/deploy.sh",
       "execute_command": "sudo {{.Path}}"
     }
   ]
