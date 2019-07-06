@@ -7,7 +7,7 @@
 
 	bastion_IP = 35.195.253.177
 	someinternalhost_IP = 10.132.0.3
-2.	##### Подключение по SSH
+2. ##### Подключение по SSH
 
 
 	Для подключения к someinternalhost в одну строку использовалась команда:
@@ -122,11 +122,32 @@
     "network": "default",
     "tags": "puma-server"
 Хотя часть параметров касается временной ВМ для создания шаблона и не распространяется на создаваемый экземпляр ВМ.
+
 3. ##### Создание шаблона запускаемого приложения:
 Создан дополнительный шаблон, в который копируется файл ***reddit.service***,  
 затем с помощью скрипта ***deploy.sh*** устанавливаются зависимости и  
 файл службы приложения копируется в ***/etc/systemd/system/*** и запускается.
+
 4. ##### Запуск создания экземпляра ВМ:
 Создан скрипт для создания ВМ:
 
     gcloud compute instances create reddit-app2 --image-family reddit-full --machine-type=g1-small --tags puma-server --restart-on-failure
+
+## ДЗ №6 terraform-1
+1. ##### Практика IaC с использованием terraform:
+
+2. ##### Самостоятельные задания:
+Дополнительно были созданы входные переменные для приватного ключа и зоны,
+и создан файл ***terraform.tfvars.example***
+
+3. ##### Добавление ssh ключей нескольких пользователей:
+
+В коде добавлены ssh ключи в метаданные проекта:
+
+    resource "google_compute_project_metadata" "default" {
+      metadata = {
+        ssh-keys = "appuser1:${file(var.public_key_path)}appuser2:${file(var.public_key_path)}appuser3:${file(var.public_key_path)}"
+      }
+    }
+
+Ключ пользователя, добавленного через web terraform при следующем применении удаляет.
