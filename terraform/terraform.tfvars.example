@@ -2,3 +2,4 @@ project = "Somename-123456"
 public_key_path = "~/.ssh/appuser.pub"
 disk_image = "Someimage"
 private_key_path = "~/.ssh/appuser"
+count = 2
