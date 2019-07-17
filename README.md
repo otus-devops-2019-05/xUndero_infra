@@ -157,3 +157,76 @@
 Затем создал файл ***lb.tf***
 При добавлении второго экземпляра проверил работу балансировщика. При добавлении второго экземпляра происходит дублирование кода.
 Поэтому было переделано создание экземпляров с помощью параметра ***count***.
+
+## ДЗ №7 terraform-2
+1. ##### Дальнейшее изучение организации инфраструктуры:
+  * Создание и импорт ресурсов на примере правила файрвола;
+  * Взаимосвязь ресурсов;
+  * Разбивка конфигурации на отдельные файлы;
+  * Использование модулей
+
+2. ##### Самостоятельные задания:
+Создан модуль *`vpc`* main.tf:
+
+    resource "google_compute_firewall" "firewall_ssh" {
+    name        = "default-allow-ssh"
+    description = "My ssh rule"
+    network     = "default"
+    
+    allow {
+      protocol = "tcp"
+      ports    = ["22"]
+    }
+    
+    source_ranges = "${var.source_ranges}"
+    }
+Модуль с параметром отрабатывает, в том числе и при использовании двух окружений.
+
+3. ##### Работа с реестром модулей:
+Storage-buckets созданы успешно.
+
+4. ##### Настройка хранения файла состояния:
+Создан файл ***backend.tf***:
+
+    terraform {
+      backend "gcs" {
+        bucket = "storage-app"
+        prefix = "prod"
+      }
+    }
+В stage - соответственно prefix = "stage".
+При работе terraform блокирует доступ к файлу состояния и при попытке запустить из другого места сообщает о блокировке (даже если только ждёт ответа yes)
+
+5. ##### Запуск приложения:
+  * db:
+
+Образ db был пересоздан packer-ом с подменой файла конфигурации, разрешающего прослушивать адреса 0.0.0.0/0;
+Также была создана выходная переменная:
+
+    output "db_internal_ip" {
+      value = "${google_compute_instance.db.network_interface.0.network_ip}"
+    }
+  * app:
+
+Использованные ранее файлы *`puma.service и deploy.sh`* положены в ***../modules/app/files/***;  
+В файле puma.service добавлена строка *`EnvironmentFile=/home/appuser/puma.env`*;  
+Также добавлена переменная *`db_internal_ip`*, которая в корневом модуле определяется:
+
+    db_internal_ip   = "${module.db.db_internal_ip}"
+
+И включены следующие provisioners:
+
+    provisioner "file" {
+      source      = "../modules/app/files/puma.service"
+      destination = "/tmp/puma.service"
+    }
+    
+    provisioner "file" {
+    content     = "DATABASE_URL=${var.db_internal_ip}"
+    destination = "/home/appuser/puma.env"
+    }
+    
+    provisioner "remote-exec" {
+    script = "../modules/app/files/deploy.sh"
+    }
+

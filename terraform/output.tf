@@ -1,7 +1,8 @@
-output "app_external_ip" {
-  value = ["${google_compute_instance.app.*.network_interface.0.access_config.0.nat_ip}"]
+output "storage-bucket_url" {
+  value = "${module.storage-bucket.url}"
 }
 
-output "lb_ip" {
+/*output "lb_ip" {
   value = "${google_compute_global_forwarding_rule.default.ip_address}"
-}
+}*/
+
