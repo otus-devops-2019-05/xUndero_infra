@@ -7,7 +7,7 @@ variable region {
   default     = "europe-west1"
 }
 
-/*variable zone {
+variable zone {
   description = "Zone"
   default     = "europe-west1-d"
 }
@@ -36,5 +36,4 @@ variable private_key_path {
 
 variable count {
   default = 1
-}*/
-
+}

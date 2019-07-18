@@ -1,0 +1,4 @@
+project = "Some-project"
+public_key_path = "~/.ssh/appuser.pub"
+disk_image = "Some-disk"
+private_key_path = "~/.ssh/appuser"
