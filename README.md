@@ -230,3 +230,29 @@ Storage-buckets созданы успешно.
     script = "../modules/app/files/deploy.sh"
     }
 
+# ДЗ №8 ansible-1
+1. ##### Установка и знакомство с Ansible:
+  * Создание inventory и файла cfg;
+  * Группы хостов;
+  * Использование YAML inventory;
+  * Использование playbook-ов.
+В последнем пункте при удалении каталога вручную и запуска playbook-а повторно состояние станет changed=1
+
+2. ##### Самостоятельные задания:
+Отличительной особенностью формата JSON для динамического inventory является наличие секции *`_meta`*
+Для создания файла я использовал команду:
+
+    ansible-inventory -i ./inventory.yml --list --output=./inventory.json
+Т. к. сказано, что можно использовать данный файл), создал следующий скрипт:
+
+    #!/bin/bash
+    if [ $# -eq 0 ]
+      then
+      echo "Usage: script --list"
+      exit 1
+    fi
+    if [ $1 = "--list" ]
+      then
+      cat ./inventory.json
+    fi
+                
