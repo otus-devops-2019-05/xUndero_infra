@@ -256,3 +256,36 @@ Storage-buckets созданы успешно.
       cat ./inventory.json
     fi
                 
+# ДЗ №9 ansible-2
+1. ##### Управление инфраструктурой с Ansible:
+  * Использование playbook-ов, handler-ов, шаблонов;
+  * Один playbook - несколько сценариев;
+  * Несколько playbook-ов.
+
+2. ##### Самостоятельное задание:
+В качестве динамического инвентори использовал рекомендуемое Ansible решение - ***inventory plugin***  
+А конкретно *`gcp_compute`*.  
+Плагины были разрешены в ***ansible.cfg***
+
+    [inventory]
+    enable_plugins = script, gcp_compute
+И создан файл конфигурации плагина:
+
+    plugin: gcp_compute
+    projects:
+      - infra-244506
+    auth_kind: serviceaccount
+    service_account_file: ~/infra-244506-f3d242c52a39.json
+    scopes:
+      - 'https://www.googleapis.com/auth/compute.readonly'
+    hostnames:
+      - name
+    groups:
+      app: "'app' in name"
+      db: "'db' in name"
+    compose:
+      ansible_host: networkInterfaces[0].accessConfigs[0].natIP
+                
+3. ##### Провижининг в Packer:
+Скрипты провижининга пакера были переделаны на ansible и проверено развёртывание приложения.
+
