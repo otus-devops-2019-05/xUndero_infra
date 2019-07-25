@@ -1,10 +1,10 @@
 resource "google_compute_address" "app_ip" {
-  count = "${var.count}"
+  count = "${var.inst_count}"
   name  = "reddit-app-ip-${count.index + 1}"
 }
 
 resource "google_compute_instance" "app" {
-  count        = "${var.count}"
+  count        = "${var.inst_count}"
   name         = "reddit-app-${count.index + 1}"
   machine_type = "g1-small"
   zone         = "${var.zone}"
@@ -58,6 +58,19 @@ resource "google_compute_firewall" "firewall_puma" {
   allow {
     protocol = "tcp"
     ports    = ["9292"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["reddit-app"]
+}
+
+resource "google_compute_firewall" "firewall_nginx" {
+  name    = "allow-nginx-default"
+  network = "default"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80"]
   }
 
   source_ranges = ["0.0.0.0/0"]
