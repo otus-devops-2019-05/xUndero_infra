@@ -2,6 +2,13 @@ dist: trusty
 sudo: required
 language: bash
 before_install:
+- ssh-keygen -t rsa -f ~/.ssh/appuser -C appuser -P ""
+- for files in ./packer/*.json; do packer validate -var-file=./packer/variables.json.example $files; done
+- curl -o ./tmp.zip https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip && unzip ./tmp.zip -d ~/.local/bin && rm ./tmp.zip
+- cd ./terraform/stage && cp ./terraform.tfvars.example ./terraform.tfvars && terraform init -backend=false && terraform validate && cd ../..
+- cd ./terraform/prod && cp ./terraform.tfvars.example ./terraform.tfvars && terraform init -backend=false && terraform validate && cd ../..
+- cd ./terraform/stage && docker run --rm -v $(pwd):/data -t wata727/tflint ./ && cd ../prod && docker run --rm -v $(pwd):/data -t wata727/tflint && cd ../..
+- pip install --user ansible-lint && ansible-lint ./ansible/playbooks/*.yml
 - curl https://raw.githubusercontent.com/express42/otus-homeworks/2019-05/run.sh | bash
 notifications:
   slack:

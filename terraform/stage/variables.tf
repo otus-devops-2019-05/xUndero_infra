@@ -34,6 +34,6 @@ variable private_key_path {
   description = "Path to the private key used for connect"
 }
 
-variable count {
+variable inst_count {
   default = 1
 }

@@ -12,6 +12,6 @@ variable db_disk_image {
   default     = "reddit-db-base"
 }
 
-variable count {
+variable inst_count {
   default = 1
 }
