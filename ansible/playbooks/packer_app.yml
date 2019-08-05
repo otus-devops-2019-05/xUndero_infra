@@ -2,14 +2,15 @@
 - name: Install Ruby
   hosts: default
   become: true
-  tasks:
-    - name: Install a list of packages
-      apt:
-        name: "{{ packages }}"
-        update_cache: yes
-      vars:
-        packages:
-        - ruby-full
-        - ruby-bundler
-        - build-essential
-
+  roles:
+    - app
+#  tasks:
+#    - name: Install a list of packages
+#      apt:
+#        name: "{{ packages }}"
+#        update_cache: yes
+#      vars:
+#        packages:
+#        - ruby-full
+#        - ruby-bundler
+#        - build-essential
