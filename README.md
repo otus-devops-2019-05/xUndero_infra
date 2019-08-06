@@ -1,4 +1,56 @@
 # xUndero_infra [![Build Status](https://travis-ci.com/otus-devops-2019-05/xUndero_infra.svg?branch=master)](https://travis-ci.com/otus-devops-2019-05/xUndero_infra)
+## ДЗ №11 ansible-4
+1. #### Локальная разработка при помощи Vagrant:
+  * Установка Vagrant;
+  * Провижининг;
+  * Доработка ролей.
+
+2. #### Самостоятельное задание:
+Для настройки nginx добавлены переменные (синтаксис долго искал) )
+
+    ansible.extra_vars = { "deploy_user" => "vagrant",
+      "nginx_sites" => {
+        "default" => [
+          "listen 80",
+          "server_name 'reddit'",
+          "location / { proxy_pass http://127.0.0.1:9292; }"
+        ]
+      }
+    }
+3. #### Тестирование роли:
+  * Установка virtualenv - ansible, molecule, testinfra
+  * Проверка тестов.
+
+4. #### Самостоятельное задание:
+Для проверки порта использован модуль TestInfra socket:
+
+    def test_listening(host):
+      test_socket = host.socket('tcp://0.0.0.0:27017')
+      assert test_socket.is_listening
+В шаблонах пакера использовались плейбуки с ролями ***в app.json:***
+
+    "provisioners": [
+      {
+         "type": "ansible",
+         "playbook_file": "ansible/playbooks/packer_app.yml",
+         "ansible_env_vars": ["ANSIBLE_ROLES_PATH={{ pwd }}/ansible/roles"],
+         "extra_arguments": ["--extra-vars", "db_host='10.132.0.23'"]
+      }
+    ]
+И ***в db.json:***
+
+    "provisioners": [
+      {
+         "type": "ansible",
+         "playbook_file": "ansible/playbooks/packer_db.yml",
+         "ansible_env_vars": ["ANSIBLE_ROLES_PATH={{ pwd }}/ansible/roles"],
+         "extra_arguments": ["--extra-vars", "mongo_bind_ip='0.0.0.0'"]
+      }
+    ]  
+  * Роль db вынесена отдельно https://galaxy.ansible.com/xundero/otus_db;
+  * Раз было упомянуто о тестировании докером решил использовать его,
+  сперва локально, а затем с Тревисом. Нотификацию добавил.
+
 ## ДЗ №10 ansible-3
 1. #### Работа с ролями и окружениями:
   * Использование ролей;
